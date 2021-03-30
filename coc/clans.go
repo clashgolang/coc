@@ -101,7 +101,7 @@ func GetClan(tag string) (*Clan, error) {
 }
 
 // GetClans returns information about all clans that match the query parameters
-func GetClans(qparms rest.QParms) ([]Clan, error) {
+func GetClans(name string, qparms rest.QParms) ([]Clan, error) {
 	url := config.Data.BaseURL + "/clans"
 	body, err := get(url, qparms)
 	if err != nil {

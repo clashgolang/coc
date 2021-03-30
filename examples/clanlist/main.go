@@ -7,7 +7,6 @@ import (
 	"os"
 
 	"github.com/clashgolang/coc/coc"
-	"github.com/clashgolang/coc/pkg/rest"
 	"github.com/urfave/cli/v2"
 )
 
@@ -73,9 +72,7 @@ func getClanList(c *cli.Context) error {
 	name := c.String("clan")
 
 	// Get the clan wars
-	qparms := rest.QParms{}
-	qparms["name"] = name
-	clans, err := coc.GetClans(qparms)
+	clans, err := coc.GetClans(name, nil)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
