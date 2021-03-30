@@ -2,7 +2,6 @@ package coc
 
 import (
 	"encoding/json"
-	"net/url"
 	"strings"
 
 	"github.com/clashgolang/coc/pkg/config"
@@ -99,15 +98,11 @@ func GetLocation(id string) (*Location, error) {
 	sb.Grow(100)
 	sb.WriteString(config.Data.BaseURL)
 	sb.WriteString("/locations/")
+	sb.WriteString(fmtTag(id))
+	url := sb.String()
+	log.Trace(url)
 
-	// If the tag doesn't have a '#' character at the front, add one
-	if id[0] == '#' {
-		sb.WriteString(url.QueryEscape(id))
-	} else {
-		sb.WriteString(url.QueryEscape("#" + id))
-	}
-
-	body, err := get(sb.String(), nil)
+	body, err := get(url, nil)
 	if err != nil {
 		return nil, err
 	}

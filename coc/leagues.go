@@ -2,7 +2,6 @@ package coc
 
 import (
 	"encoding/json"
-	"net/url"
 	"strings"
 
 	"github.com/clashgolang/coc/pkg/config"
@@ -71,13 +70,11 @@ func GetLeague(leagueID string) (*League, error) {
 	sb.Grow(100)
 	sb.WriteString(config.Data.BaseURL)
 	sb.WriteString("/leagues/")
-	if leagueID[0] == '#' {
-		sb.WriteString(url.QueryEscape("#" + leagueID))
-	} else {
-		sb.WriteString(url.QueryEscape(leagueID))
-	}
+	sb.WriteString(fmtTag(leagueID))
+	url := sb.String()
+	log.Trace(url)
 
-	body, err := get(sb.String(), nil)
+	body, err := get(url, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -2,7 +2,6 @@ package coc
 
 import (
 	"encoding/json"
-	"net/url"
 	"strings"
 
 	"github.com/clashgolang/coc/pkg/config"
@@ -73,9 +72,8 @@ func GetClanWarLeagueGroup(clanTag string) (*ClanWarLeagueGroup, error) {
 	sb.WriteString(config.Data.BaseURL)
 	sb.WriteString("/clans/")
 	sb.WriteString(fmtTag(clanTag))
-	sb.WriteString("/currentwar/leaguegroup")
 	url := sb.String()
-	log.Info(url)
+	log.Trace(url)
 
 	body, err := get(url, nil)
 	if err != nil {
@@ -102,14 +100,12 @@ func GetClanWarLeagueWar(clanTag string) (*ClanWarLeagueWar, error) {
 	sb.Grow(100)
 	sb.WriteString(config.Data.BaseURL)
 	sb.WriteString("/clanswarleagues/wars/")
-	if clanTag[0] == '#' {
-		sb.WriteString(url.QueryEscape("#" + clanTag))
-	} else {
-		sb.WriteString(url.QueryEscape(clanTag))
-	}
+	sb.WriteString(fmtTag(clanTag))
 	sb.WriteString("/currentwar")
+	url := sb.String()
+	log.Trace(url)
 
-	body, err := get(sb.String(), nil)
+	body, err := get(url, nil)
 	if err != nil {
 		return nil, err
 	}
