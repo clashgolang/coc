@@ -10,6 +10,8 @@ const (
 	cocTimeLayout = "20060102T150405.000Z"
 )
 
+// CoCTime is a redefinition of the Time structure.  This allows for unmarshalling of
+// the time format used by Clash of Clans.
 type CoCTime time.Time
 
 // UnmarshalJSON parses a JSON string into a CocTime structure

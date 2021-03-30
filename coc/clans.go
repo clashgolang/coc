@@ -61,9 +61,35 @@ func (m ClanMember) String() string {
 	return string(b)
 }
 
+// ClanRanking is the clan ranking for a specific location.
+type ClanRanking struct {
+	BadgeUrls    BadgeUrls `json:"badgeUrls"`
+	ClanLevel    int       `json:"clanLevel"`
+	ClanPoints   int       `json:"clanPoints"`
+	Location     Location  `json:"location"`
+	Members      int       `json:"members"`
+	Name         string    `json:"name"`
+	PreviousRank int       `json:"previousRank"`
+	Rank         int       `json:"rank"`
+	Tag          string    `json:"tag"`
+}
+
+// String returns a string representation of a location clan ranking
+func (l ClanRanking) String() string {
+	b, _ := json.Marshal(l)
+	return string(b)
+}
+
+// ClanVersusRanking is the clan versus ranking for a specific location
+type ClanVersusRanking struct {
+	ClanVersusPoints int `json:"clanVersusPoints"`
+	ClanPoints       int `json:"clanPoints"`
+}
+
 // ClanReference provides a reference to a given clan
 type ClanReference struct {
 	BadgeUrls BadgeUrls `json:"badgeUrls"`
+	ClanLevel int       `json:"clanLevel"`
 	Name      string    `json:"name"`
 	Tag       string    `json:"tag"`
 }
@@ -149,4 +175,66 @@ func GetClanMembers(clanTag string, qparms rest.QParms) ([]ClanMember, error) {
 	}
 
 	return resp.ClanMembers, nil
+}
+
+// GetClan Rankings gets clan rankings for a specific location
+func GetClanRankings(locationID string, qparms rest.QParms) ([]ClanRanking, error) {
+	var sb strings.Builder
+	sb.Grow(100)
+	sb.WriteString(config.Data.BaseURL)
+	sb.WriteString("/locations/")
+	sb.WriteString(fmtTag(locationID))
+	sb.WriteString("/rankings/clans")
+	url := sb.String()
+	log.Trace(url)
+
+	body, err := get(url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	// Parse into an array of clan rankings
+	type respType struct {
+		Rankings []ClanRanking `json:"items"`
+	}
+	var resp respType
+	err = json.Unmarshal(body, &resp)
+	if err != nil {
+		log.Debug("failed to parse the json response")
+		return nil, err
+	}
+
+	// Return the clan
+	return resp.Rankings, nil
+}
+
+// GetClanRankings gets clan versus rankings for a specific location
+func GetClanVersusRankings(locationID string, qparms rest.QParms) ([]ClanVersusRanking, error) {
+	var sb strings.Builder
+	sb.Grow(100)
+	sb.WriteString(config.Data.BaseURL)
+	sb.WriteString("/locations/")
+	sb.WriteString(fmtTag(locationID))
+	sb.WriteString("/rankings/clan-versus")
+	url := sb.String()
+	log.Trace(url)
+
+	body, err := get(url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	// Parse into an array of clan rankings
+	type respType struct {
+		Rankings []ClanVersusRanking `json:"items"`
+	}
+	var resp respType
+	err = json.Unmarshal(body, &resp)
+	if err != nil {
+		log.Debug("failed to parse the json response")
+		return nil, err
+	}
+
+	// Return the clan
+	return resp.Rankings, nil
 }

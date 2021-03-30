@@ -65,6 +65,7 @@ func (wl WarLeague) String() string {
 	return string(b)
 }
 
+// GetLeague gets the league information
 func GetLeague(leagueID string) (*League, error) {
 	var sb strings.Builder
 	sb.Grow(100)
@@ -93,6 +94,7 @@ func GetLeague(leagueID string) (*League, error) {
 	return &resp.League, nil
 }
 
+// GetLeagues lists the leagues
 func GetLeagues(qparms rest.QParms) ([]League, error) {
 	var sb strings.Builder
 	sb.Grow(100)
@@ -107,6 +109,122 @@ func GetLeagues(qparms rest.QParms) ([]League, error) {
 	// Parse into an array of clans
 	type respType struct {
 		Leagues []League `json:"items"`
+	}
+	var resp respType
+	err = json.Unmarshal(body, &resp)
+	if err != nil {
+		log.Debug("failed to parse the json response")
+		return nil, err
+	}
+
+	return resp.Leagues, nil
+}
+
+// GetLeagueSeasons gets the league seasons
+func GetLeagueSeasons(leagueID string) ([]LeagueSeason, error) {
+	var sb strings.Builder
+	sb.Grow(100)
+	sb.WriteString(config.Data.BaseURL)
+	sb.WriteString("/leagues/")
+	sb.WriteString(fmtTag(leagueID))
+	sb.WriteString("/seasons")
+	url := sb.String()
+	log.Trace(url)
+
+	body, err := get(url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	// Parse into an array of clans
+	type respType struct {
+		Seasons []LeagueSeason `json:"items"`
+	}
+	var resp respType
+	err = json.Unmarshal(body, &resp)
+	if err != nil {
+		log.Debug("failed to parse the json response")
+		return nil, err
+	}
+
+	return resp.Seasons, nil
+}
+
+// GetLeagueSeasonRankings gets the league season rankings for Legend League
+func GetLeagueSeasonRankings(leagueID string) ([]LeagueSeasonRanking, error) {
+	var sb strings.Builder
+	sb.Grow(100)
+	sb.WriteString(config.Data.BaseURL)
+	sb.WriteString("/leagues/")
+	sb.WriteString(fmtTag(leagueID))
+	url := sb.String()
+	log.Trace(url)
+
+	body, err := get(url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	// Parse into an array of clans
+	type respType struct {
+		Rankings []LeagueSeasonRanking `json:"items"`
+	}
+	var resp respType
+	err = json.Unmarshal(body, &resp)
+	if err != nil {
+		log.Debug("failed to parse the json response")
+		return nil, err
+	}
+
+	return resp.Rankings, nil
+}
+
+// GetLWareague gets the war league information
+func GetWarLeague(leagueID string) (*WarLeague, error) {
+	var sb strings.Builder
+	sb.Grow(100)
+	sb.WriteString(config.Data.BaseURL)
+	sb.WriteString("/warleagues/")
+	sb.WriteString(fmtTag(leagueID))
+	url := sb.String()
+	log.Trace(url)
+
+	body, err := get(url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	// Parse into an array of clans
+	type respType struct {
+		League WarLeague `json:"items"`
+	}
+	var resp respType
+	err = json.Unmarshal(body, &resp)
+	if err != nil {
+		log.Debug("failed to parse the json response")
+		return nil, err
+	}
+
+	return &resp.League, nil
+}
+
+// GetWarLeagues lists the war leagues
+func GetWarLeagues(qparms rest.QParms) ([]WarLeague, error) {
+	var sb strings.Builder
+	sb.Grow(100)
+	sb.WriteString(config.Data.BaseURL)
+	sb.WriteString("/warleagues/")
+	url := sb.String()
+	log.Trace(url)
+
+	body, err := get(url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	// Parse into an array of clans
+	type respType struct {
+		Leagues []WarLeague `json:"items"`
 	}
 	var resp respType
 	err = json.Unmarshal(body, &resp)
