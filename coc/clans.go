@@ -74,7 +74,7 @@ type ClanRanking struct {
 	Tag          string    `json:"tag"`
 }
 
-// String returns a string representation of a location clan ranking
+// String returns a string representation of a clan ranking
 func (l ClanRanking) String() string {
 	b, _ := json.Marshal(l)
 	return string(b)
@@ -84,6 +84,12 @@ func (l ClanRanking) String() string {
 type ClanVersusRanking struct {
 	ClanVersusPoints int `json:"clanVersusPoints"`
 	ClanPoints       int `json:"clanPoints"`
+}
+
+// String returns a string representation of a clan versus ranking
+func (l ClanVersusRanking) String() string {
+	b, _ := json.Marshal(l)
+	return string(b)
 }
 
 // ClanReference provides a reference to a given clan
